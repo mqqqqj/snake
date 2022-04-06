@@ -42,6 +42,7 @@ private:
     int speed = 500;
     QString scorelabel = "Current Score: ";
     int nDirection;//·½Ïò
+    int lastDirection = 1;
 
 };
 #endif // SNAKE_H

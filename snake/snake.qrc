@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/snake">
         <file>apple.png</file>
-        <file>C:/Users/Lenovo/Desktop/snake1/img/bg.jpg</file>
+        <file>bg.jpg</file>
     </qresource>
 </RCC>

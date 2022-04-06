@@ -27,7 +27,7 @@ void snake::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::black);//set the color of the pen
     painter.setBrush(Qt::white);
     painter.drawRect(20, 20, 250, 250);//start point(compare to the window),width,height
-    painter.drawPixmap(20, 20, 250, 250, QPixmap(":/snake/C:/Users/Lenovo/Desktop/snake1/img/bg.jpg"));
+    painter.drawPixmap(20, 20, 250, 250, QPixmap(":/snake/bg.jpg"));
 
     //draw pane 10*10
     painter.setPen(Qt::black);
@@ -102,7 +102,9 @@ void snake::snake_update() {
     ishit();
     for (int j = 0; j < vsnake.size() - 1; j++)
         vsnake[vsnake.size() - 1 - j] = vsnake[vsnake.size() - 2 - j];
-
+    if (nDirection == lastDirection)
+        if (speed > 150)
+            speed -= 10;
     switch (nDirection) {
     case 1:
         snakehead.setTop(snakehead.top() - 10);
@@ -121,19 +123,26 @@ void snake::snake_update() {
         snakehead.setRight(snakehead.right() + 10);
     default:;
     }
+    lastDirection = nDirection;
     vsnake[0] = snakehead;
     if (snakehead.left() < 20 || snakehead.right() > 270 || snakehead.top() < 20 || snakehead.bottom() > 270) {
-        sDisplay = "游戏结束";
+        sDisplay = "Snake died...";
         blsOver = true;
     }
     update();
 }
 
-QRect snake::creatRect() {
-    int x = qrand() % 25;
-    int y = qrand() % 25;
-    QRect rect(20 + x * 10, 20 + y * 10, 10, 10);
-    return rect;
+QRect snake::creatRect() {//写一个判断生成的苹果是否在蛇内部
+    while (true) {
+        int x = qrand() % 25;
+        int y = qrand() % 25;
+        QRect rect(20 + x * 10, 20 + y * 10, 10, 10);
+        bool flag = true;
+        for (int i = 0; i < vsnake.size(); i++) {
+            if (rect == vsnake[i])flag = false;
+        }
+        if (flag)return rect;
+    }
 }
 
 
@@ -143,8 +152,8 @@ void snake::iseat() {
         vsnake.push_back(vsnake.last());
         food = creatRect();
         nScore += 10;
-        if (speed > 200) {
-            speed -= 20;
+        if (speed >= 150) {
+            speed -= 10;
             timer->stop();
             timer->start(speed);
         }
@@ -154,7 +163,7 @@ void snake::iseat() {
 void snake::ishit() {
     for (int i = 1; i < vsnake.size(); i++) {
         if (snakehead == vsnake[i]) {
-            sDisplay = "the snake is died...";
+            sDisplay = "Snake died...";
             blsOver = true;
             update();
         }
